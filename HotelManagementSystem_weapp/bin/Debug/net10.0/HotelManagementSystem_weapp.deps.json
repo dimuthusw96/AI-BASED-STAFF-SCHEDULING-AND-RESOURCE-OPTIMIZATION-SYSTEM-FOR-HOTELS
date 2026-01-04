@@ -1,0 +1,41 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "HotelManagementSystem_weapp/1.0.0": {
+        "dependencies": {
+          "Radzen.Blazor": "8.3.4"
+        },
+        "runtime": {
+          "HotelManagementSystem_weapp.dll": {}
+        }
+      },
+      "Radzen.Blazor/8.3.4": {
+        "runtime": {
+          "lib/net10.0/Radzen.Blazor.dll": {
+            "assemblyVersion": "8.3.4.0",
+            "fileVersion": "8.3.4.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "HotelManagementSystem_weapp/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Radzen.Blazor/8.3.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-CsxW6RVVC6btLcJV1DvKslJdRz7BZO9kz/12NkCFp4GGyNqrRSvb0i5JEDMuZjREngj9cEmwCdPjPKITYqnF2w==",
+      "path": "radzen.blazor/8.3.4",
+      "hashPath": "radzen.blazor.8.3.4.nupkg.sha512"
+    }
+  }
+}

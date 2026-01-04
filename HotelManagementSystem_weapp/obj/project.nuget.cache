@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "Enqke30/TZs=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\dimut\\source\\repos\\HotelManagementSystem\\HotelManagementSystem_weapp\\HotelManagementSystem_weapp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\dimut\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.1\\microsoft.aspnetcore.app.internal.assets.10.0.1.nupkg.sha512",
+    "C:\\Users\\dimut\\.nuget\\packages\\radzen.blazor\\8.3.4\\radzen.blazor.8.3.4.nupkg.sha512"
+  ],
+  "logs": []
+}

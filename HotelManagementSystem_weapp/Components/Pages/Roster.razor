@@ -1,0 +1,434 @@
+﻿@page "/roster"
+@using System.Text.Json.Serialization
+@using HotelManagementSystem.Web.Models
+@inject IHttpClientFactory ClientFactory
+@inject NotificationService NotificationService
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+<style>
+    /* --- THEME: FLOATING CARDS --- */
+    body {
+        background-color: #f0f2f5;
+    }
+    /* Softer background */
+
+    .app-container {
+        padding: 40px;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* HEADER */
+    .glass-header {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 20px 30px;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    /* FLOATING TABLE STYLE */
+    .floating-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 12px; /* This creates the gap between rows */
+    }
+
+        .floating-table thead th {
+            color: #8898aa;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            padding: 15px;
+            border: none;
+            text-align: center;
+        }
+
+        .floating-table tbody tr {
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+            .floating-table tbody tr:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+                z-index: 10;
+                position: relative;
+            }
+
+            /* CURVED CORNERS FOR ROWS */
+            .floating-table tbody tr td:first-child {
+                border-top-left-radius: 12px;
+                border-bottom-left-radius: 12px;
+            }
+
+            .floating-table tbody tr td:last-child {
+                border-top-right-radius: 12px;
+                border-bottom-right-radius: 12px;
+            }
+
+        .floating-table td {
+            padding: 15px;
+            vertical-align: top;
+            border: none;
+        }
+
+    /* EMPLOYEE PROFILE */
+    .profile-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .profile-name {
+        font-weight: 700;
+        color: #32325d;
+        font-size: 0.95rem;
+    }
+
+    .profile-role {
+        font-size: 0.75rem;
+        color: #8898aa;
+        margin-top: 2px;
+    }
+
+    .avatar-square {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+        margin-right: 15px;
+    }
+
+    /* DROP ZONES */
+    .drop-cell {
+        min-height: 80px;
+        border-radius: 8px;
+        transition: background 0.2s;
+        border: 2px dashed transparent;
+    }
+
+        .drop-cell:hover {
+            background-color: #f6f9fc;
+            border-color: #e3e8ee;
+        }
+
+    /* VIBRANT SHIFT PILLS */
+    .gradient-pill {
+        cursor: grab;
+        padding: 10px;
+        border-radius: 8px;
+        color: white;
+        font-size: 0.85rem;
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+        transition: all 0.2s;
+        border: none;
+    }
+
+        .gradient-pill:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+    /* GRADIENTS PER ROLE */
+    .bg-hk {
+        background: linear-gradient(87deg, #11cdef 0%, #1171ef 100%) !important;
+    }
+    /* Blue/Cyan */
+    .bg-fd {
+        background: linear-gradient(87deg, #f5365c 0%, #f56036 100%) !important;
+    }
+    /* Red/Orange */
+    .bg-def {
+        background: linear-gradient(87deg, #5e72e4 0%, #825ee4 100%) !important;
+    }
+    /* Purple */
+
+    .shift-time {
+        font-weight: 700;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .shift-dur {
+        font-size: 0.7rem;
+        opacity: 0.8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* GENERATE BUTTON */
+    .btn-generate {
+        background: #2dce89;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-weight: 600;
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+        transition: all 0.15s ease;
+    }
+
+        .btn-generate:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+            background: #26af74;
+            color: white;
+        }
+
+        .btn-generate:disabled {
+            background: #e9ecef;
+            color: #8898aa;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+    .off-text {
+        color: #e9ecef;
+        font-weight: 700;
+        font-size: 1.5rem;
+        user-select: none;
+    }
+</style>
+
+<div class="app-container">
+    <div class="glass-header">
+        <div>
+            <h2 style="margin:0; font-weight:800; color:#32325d;">Staff Roster</h2>
+            <p style="margin:0; color:#8898aa; font-size:0.9rem;">Manage weekly assignments efficiently.</p>
+        </div>
+        <div>
+            <button class="btn-generate" @onclick="GenerateSchedule" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span>Processing...</span>
+                }
+                else
+                {
+
+                    <span>Generate AI Schedule</span>
+                }
+            </button>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger" style="border-radius: 12px;">@errorMessage</div>
+    }
+
+    @if (shifts == null || !shifts.Any())
+    {
+        <div class="text-center p-5" style="background: white; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <h4 class="text-muted">No schedule found.</h4>
+            <button class="btn btn-primary mt-3" @onclick="GenerateSchedule">Create First Schedule</button>
+        </div>
+    }
+    else
+    {
+        <table class="floating-table">
+            <thead>
+                <tr>
+                    <th style="text-align: left; padding-left: 30px;">Team Member</th>
+                    @foreach (var day in weekDays)
+                    {
+                        <th>
+                            <div style="color: #32325d; font-size: 1.1em;">@day.ToString("ddd")</div>
+                            <div>@day.ToString("MMM dd")</div>
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var staff in uniqueStaff)
+                {
+                    var role = GetRole(staff);
+                    var gradientClass = GetGradientClass(role);
+
+                    <tr>
+                        <td style="width: 250px;">
+                            <div class="d-flex align-items-center h-100 ps-3">
+                                <div class="avatar-square">@GetInitials(staff)</div>
+                                <div class="profile-card">
+                                    <div class="profile-name">@staff</div>
+                                    <div class="profile-role">@role</div>
+                                </div>
+                            </div>
+                        </td>
+
+                        @foreach (var day in weekDays)
+                        {
+                            var shift = GetShift(staff, day);
+
+                            <td class="drop-cell"
+                                @ondragenter:preventDefault="true"
+                                @ondragover:preventDefault="true"
+                                @ondrop="() => HandleDrop(staff, day)">
+
+                                @if (shift != null)
+                                {
+                                    <div class="gradient-pill @gradientClass"
+                                         draggable="true"
+                                         @ondragstart="() => HandleDragStart(shift)">
+
+                                        <span class="shift-time">
+                                            @FormatTime(shift.StartTime) - @FormatTime(shift.EndTime)
+                                        </span>
+                                        <span class="shift-dur">8 HOURS</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex justify-content-center align-items-center h-100">
+                                        <span class="off-text">·</span>
+                                    </div>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+
+@code {
+    // --- SAME ROBUST C# LOGIC AS BEFORE ---
+
+    public class ShiftDto
+    {
+        [JsonPropertyName("shiftID")] public int ShiftID { get; set; }
+        [JsonPropertyName("shiftDate")] public DateTime ShiftDate { get; set; }
+        [JsonPropertyName("staffName")] public string StaffName { get; set; }
+        [JsonPropertyName("role")] public string Role { get; set; }
+        [JsonPropertyName("startTime")] public TimeSpan StartTime { get; set; }
+        [JsonPropertyName("endTime")] public TimeSpan EndTime { get; set; }
+    }
+
+    private List<ShiftDto> shifts = new List<ShiftDto>();
+    private List<DateTime> weekDays = new List<DateTime>();
+    private List<string> uniqueStaff = new List<string>();
+    private bool isLoading = true;
+    private string errorMessage = "";
+    private HttpClient client;
+    private ShiftDto draggedShift;
+
+    protected override async Task OnInitializedAsync()
+    {
+        client = ClientFactory.CreateClient();
+        client.BaseAddress = new Uri("https://localhost:7016/");
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        errorMessage = "";
+        try
+        {
+            var todayStr = DateTime.Today.ToString("yyyy-MM-dd");
+            var allShifts = await client.GetFromJsonAsync<List<ShiftDto>>($"api/schedule/list?start={todayStr}&days=30");
+
+            if (allShifts != null && allShifts.Any())
+            {
+                shifts = allShifts;
+                var firstDate = shifts.Min(s => s.ShiftDate);
+                weekDays.Clear();
+                for (int i = 0; i < 7; i++) weekDays.Add(firstDate.AddDays(i));
+
+                var endDate = firstDate.AddDays(7);
+                shifts = shifts.Where(s => s.ShiftDate < endDate).ToList();
+                uniqueStaff = shifts.Select(s => s.StaffName).Distinct().OrderBy(n => n).ToList();
+            }
+        }
+        catch (Exception ex) { errorMessage = $"Connection Error: {ex.Message}. Check API Port."; }
+        finally { isLoading = false; }
+    }
+
+    private async Task GenerateSchedule()
+    {
+        try
+        {
+            isLoading = true;
+            var response = await client.PostAsync("api/schedule/generate", null);
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Server Error: {error}");
+            }
+            await LoadData();
+        }
+        catch (Exception ex) { errorMessage = ex.Message; }
+        finally { isLoading = false; }
+    }
+
+    private void HandleDragStart(ShiftDto shift)
+    {
+        draggedShift = shift;
+    }
+
+    private async Task HandleDrop(string targetStaff, DateTime targetDate)
+    {
+        if (draggedShift == null) return;
+        if (draggedShift.ShiftID == 0) { errorMessage = "Error: Invalid Shift ID (0). Cannot save."; return; }
+
+        var oldStaff = draggedShift.StaffName;
+        var oldDate = draggedShift.ShiftDate;
+
+        draggedShift.StaffName = targetStaff;
+        draggedShift.ShiftDate = targetDate;
+        StateHasChanged();
+
+        try
+        {
+            var updateRequest = new { ShiftID = draggedShift.ShiftID, NewDate = targetDate, NewStaffName = targetStaff };
+            var response = await client.PutAsJsonAsync("api/schedule/update", updateRequest);
+            if (!response.IsSuccessStatusCode) throw new Exception("API returned error.");
+            NotificationService.Notify(NotificationSeverity.Success, "Success", "Shift moved.");
+        }
+        catch (Exception ex)
+        {
+            draggedShift.StaffName = oldStaff;
+            draggedShift.ShiftDate = oldDate;
+            errorMessage = "Save Failed: " + ex.Message;
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "Could not save move.");
+        }
+    }
+
+    private ShiftDto? GetShift(string staffName, DateTime date) =>
+        shifts?.FirstOrDefault(s => s.StaffName == staffName && s.ShiftDate.Date == date.Date);
+
+    private string GetRole(string staffName) =>
+        shifts?.FirstOrDefault(s => s.StaffName == staffName)?.Role ?? "Staff";
+
+    private string FormatTime(TimeSpan time) => DateTime.Today.Add(time).ToString("h:mm tt");
+    private string GetInitials(string name) => string.IsNullOrEmpty(name) ? "?" : $"{name.Split(' ')[0][0]}";
+
+    // --- NEW GRADIENT HELPERS ---
+    private string GetGradientClass(string role)
+    {
+        role = role.ToLower();
+        if (role.Contains("house")) return "bg-hk";    // Blue/Cyan
+        if (role.Contains("front")) return "bg-fd";    // Red/Orange
+        return "bg-def";                               // Purple
+    }
+
+
+   
+}

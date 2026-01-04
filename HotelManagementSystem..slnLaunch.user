@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "HotelManagementSystem.API\\HotelManagementSystem.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "HotelManagementSystem_weapp\\HotelManagementSystem_weapp.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

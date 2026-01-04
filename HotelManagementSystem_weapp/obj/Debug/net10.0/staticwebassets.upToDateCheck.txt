@@ -1,0 +1,8 @@
+wwwroot\app.css
+Components\Layout\ReconnectModal.razor.js
+C:\Users\dimut\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.1\build\..\_framework\blazor.web.js
+C:\Users\dimut\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.1\build\..\_framework\blazor.server.js
+C:\Users\dimut\source\repos\HotelManagementSystem\HotelManagementSystem_weapp\wwwroot\app.css
+C:\Users\dimut\source\repos\HotelManagementSystem\HotelManagementSystem_weapp\Components\Layout\ReconnectModal.razor.js
+C:\Users\dimut\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.1\_framework\blazor.server.js
+C:\Users\dimut\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.1\_framework\blazor.web.js
