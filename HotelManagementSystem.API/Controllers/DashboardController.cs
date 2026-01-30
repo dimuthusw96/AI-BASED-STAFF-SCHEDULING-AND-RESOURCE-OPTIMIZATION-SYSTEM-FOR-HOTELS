@@ -59,5 +59,22 @@ namespace HotelManagementSystem.API_.Controllers
 
             return Ok(dto);
         }
+
+        [HttpGet("history")]
+        public async Task<IActionResult> GetPredictionHistory()
+        {
+            var history = await _context.Forecasts
+                .OrderByDescending(f => f.ForecastDate) // Newest first
+                .Select(f => new
+                {
+                    ForecastDate = f.ForecastDate,
+                    OccupancyCount = f.OccupancyCount,
+                    // Add simple logic to categorize demand
+                    Status = f.OccupancyCount > 120 ? "High Demand" : (f.OccupancyCount > 50 ? "Normal" : "Low Demand")
+                })
+                .ToListAsync();
+
+            return Ok(history);
+        }
     }
 }

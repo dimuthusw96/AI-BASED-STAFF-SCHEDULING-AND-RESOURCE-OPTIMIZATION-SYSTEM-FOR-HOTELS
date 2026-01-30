@@ -1,0 +1,173 @@
+﻿@page "/login"
+@layout LoginLayout
+@using System.ComponentModel.DataAnnotations
+@using System.Security.Claims
+@inject NavigationManager NavManager
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IHttpClientFactory ClientFactory
+@rendermode InteractiveServer
+
+<style>
+    /* Modern Gradient Background */
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+
+    .login-card {
+        background: white;
+        width: 400px;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        text-align: center;
+        margin: auto;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        outline: none;
+        transition: 0.3s;
+    }
+
+        .form-control-custom:focus {
+            border-color: #5e72e4;
+        }
+
+    .btn-primary-custom {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        background: #5e72e4;
+        color: white;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .google-btn {
+        margin-top: 20px;
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        background: white;
+        border: 1px solid #ddd;
+        color: #555;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+        .google-btn:hover {
+            background-color: #f8f9fa;
+        }
+
+    .divider {
+        margin: 20px 0;
+        border-top: 1px solid #e9ecef;
+        position: relative;
+    }
+
+        .divider span {
+            background: white;
+            padding: 0 10px;
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #8898aa;
+            font-size: 0.8rem;
+        }
+</style>
+
+<div class="login-card">
+    <div style="margin-bottom: 20px;">
+        <RadzenIcon Icon="hotel" Style="font-size: 3rem; color: #5e72e4;" />
+    </div>
+    <h2 style="color:#32325d; font-weight:800;">Welcome Back</h2>
+    <p style="color:#8898aa; margin-bottom:30px;">Sign in to manage your hotel</p>
+
+    <EditForm Model="@loginModel" OnValidSubmit="HandleLocalLogin">
+        <DataAnnotationsValidator />
+
+        <InputText @bind-Value="loginModel.Username" class="form-control-custom" placeholder="Username" />
+        <InputText @bind-Value="loginModel.Password" type="password" class="form-control-custom" placeholder="Password" />
+
+        <button type="submit" class="btn-primary-custom" disabled="@isLoading">
+            @if (isLoading)
+            {
+                <span>Signing in...</span>
+            }
+            else
+            {
+
+                <span>Sign In</span>
+            }
+        </button>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="text-danger mt-2">@errorMessage</div>
+        }
+    </EditForm>
+
+    <div class="divider"><span>OR</span></div>
+
+    <button class="google-btn" @onclick="SignInWithGoogle">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20" />
+        Sign in with Google
+    </button>
+</div>
+
+@code {
+    private LoginDto loginModel = new LoginDto();
+    private bool isLoading = false;
+    private string errorMessage = "";
+
+    // DTO for Form
+    public class LoginDto
+    {
+        [Required] public string Username { get; set; }
+        [Required] public string Password { get; set; }
+    }
+
+    // --- LOCAL LOGIN LOGIC ---
+    private async Task HandleLocalLogin()
+    {
+        isLoading = true;
+        errorMessage = "";
+
+        // TODO: Replace with real API call to your DB
+        if (loginModel.Username == "admin" && loginModel.Password == "password")
+        {
+            // Tell the app "We are logged in!"
+            var customAuthState = (CustomAuthStateProvider)AuthStateProvider;
+            customAuthState.MarkUserAsAuthenticated(loginModel.Username);
+
+            NavManager.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = "Invalid username or password";
+        }
+        isLoading = false;
+    }
+
+    // --- GOOGLE LOGIN LOGIC ---
+    private void SignInWithGoogle()
+    {
+        // Redirect to the API endpoint that handles the Google Oauth dance
+        // MAKE SURE THIS PORT MATCHES YOUR API PORT
+        NavManager.NavigateTo("https://localhost:7016/api/auth/google", forceLoad: true);
+    }
+}

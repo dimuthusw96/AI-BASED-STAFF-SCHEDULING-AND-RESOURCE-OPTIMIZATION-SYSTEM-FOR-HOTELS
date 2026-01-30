@@ -11,6 +11,8 @@ namespace HotelManagementSystem.API_.Models
         public string ShiftType { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
+
+        public virtual Staff Staff { get; set; }
     }
     public class ShiftUpdateRequest
     {

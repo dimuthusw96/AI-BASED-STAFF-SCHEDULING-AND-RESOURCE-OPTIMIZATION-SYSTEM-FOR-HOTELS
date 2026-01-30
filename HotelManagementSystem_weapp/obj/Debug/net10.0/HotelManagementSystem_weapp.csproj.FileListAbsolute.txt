@@ -75,3 +75,4 @@ C:\Users\dimut\source\repos\HotelManagementSystem\HotelManagementSystem_weapp\ob
 C:\Users\dimut\source\repos\HotelManagementSystem\HotelManagementSystem_weapp\obj\Debug\net10.0\ref\HotelManagementSystem_weapp.dll
 C:\Users\dimut\source\repos\HotelManagementSystem\HotelManagementSystem_weapp\obj\Debug\net10.0\compressed\sdztvgohkz-{0}-wmp8iwak4q-wmp8iwak4q.gz
 C:\Users\dimut\source\repos\HotelManagementSystem\HotelManagementSystem_weapp\obj\Debug\net10.0\compressed\vv2aqtc5uo-{0}-2lgipwaf5j-2lgipwaf5j.gz
+C:\Users\dimut\source\repos\HotelManagementSystem\HotelManagementSystem_weapp\obj\Debug\net10.0\HotelManagementSystem_weapp.sourcelink.json

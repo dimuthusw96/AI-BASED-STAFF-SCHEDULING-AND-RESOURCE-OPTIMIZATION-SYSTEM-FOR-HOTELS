@@ -12,6 +12,22 @@
           "buildMultiTargeting/Microsoft.AspNetCore.App.Internal.Assets.targets": {}
         }
       },
+      "Microsoft.AspNetCore.Authentication.Google/10.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/net10.0/Microsoft.AspNetCore.Authentication.Google.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net10.0/Microsoft.AspNetCore.Authentication.Google.dll": {
+            "related": ".xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
       "Radzen.Blazor/8.3.4": {
         "type": "package",
         "compile": {
@@ -55,6 +71,22 @@
         "buildTransitive/Microsoft.AspNetCore.App.Internal.Assets.targets",
         "microsoft.aspnetcore.app.internal.assets.10.0.1.nupkg.sha512",
         "microsoft.aspnetcore.app.internal.assets.nuspec"
+      ]
+    },
+    "Microsoft.AspNetCore.Authentication.Google/10.0.2": {
+      "sha512": "tls7egsHsKjn4sxYmA8wwNGM+U+acpIPh1JOqFXxjG+YYn8/HOEwyO6kdFqyaqtjV2aI2ZUhGkMqYdKtlY266A==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.authentication.google/10.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "PACKAGE.md",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net10.0/Microsoft.AspNetCore.Authentication.Google.dll",
+        "lib/net10.0/Microsoft.AspNetCore.Authentication.Google.xml",
+        "microsoft.aspnetcore.authentication.google.10.0.2.nupkg.sha512",
+        "microsoft.aspnetcore.authentication.google.nuspec"
       ]
     },
     "Radzen.Blazor/8.3.4": {
@@ -128,6 +160,7 @@
   "projectFileDependencyGroups": {
     "net10.0": [
       "Microsoft.AspNetCore.App.Internal.Assets >= 10.0.1",
+      "Microsoft.AspNetCore.Authentication.Google >= 10.0.2",
       "Radzen.Blazor >= 8.3.4"
     ]
   },
@@ -186,6 +219,10 @@
             "target": "Package",
             "version": "[10.0.1, )",
             "autoReferenced": true
+          },
+          "Microsoft.AspNetCore.Authentication.Google": {
+            "target": "Package",
+            "version": "[10.0.2, )"
           },
           "Radzen.Blazor": {
             "target": "Package",

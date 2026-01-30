@@ -1,6 +1,16 @@
 [
   {
     "ContainingType": "HotelManagementSystem.API_.Controllers.DashboardController",
+    "Method": "GetPredictionHistory",
+    "RelativePath": "api/Dashboard/history",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HotelManagementSystem.API_.Controllers.DashboardController",
     "Method": "GetDashboardStats",
     "RelativePath": "api/Dashboard/stats",
     "HttpMethod": "GET",
@@ -67,6 +77,58 @@
       {
         "Name": "days",
         "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HotelManagementSystem.API_.Controllers.ScheduleController",
+    "Method": "GetStaffNames",
+    "RelativePath": "api/Schedule/staff-list",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HotelManagementSystem.API_.Controllers.ScheduleController",
+    "Method": "GetMyShifts",
+    "RelativePath": "api/Schedule/staff/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HotelManagementSystem.API_.Controllers.ScheduleController",
+    "Method": "GetMyShifts",
+    "RelativePath": "api/Schedule/staff/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "start",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "end",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       }
     ],

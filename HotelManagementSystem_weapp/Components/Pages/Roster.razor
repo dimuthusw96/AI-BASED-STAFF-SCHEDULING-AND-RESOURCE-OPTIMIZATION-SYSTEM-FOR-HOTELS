@@ -309,6 +309,8 @@
 
 
 @code {
+    [SupplyParameterFromQuery(Name = "date")]
+    public string? RequestedDate { get; set; }
     // --- SAME ROBUST C# LOGIC AS BEFORE ---
 
     public class ShiftDto
@@ -335,7 +337,19 @@
         client.BaseAddress = new Uri("https://localhost:7016/");
         await LoadData();
     }
+    protected override async Task OnParametersSetAsync()
+    {
+        // 3. Determine which date to load
+        DateTime targetDate = DateTime.Today;
 
+        if (!string.IsNullOrEmpty(RequestedDate) && DateTime.TryParse(RequestedDate, out DateTime parsedDate))
+        {
+            targetDate = parsedDate; // Use the date from History page
+        }
+
+        // 4. Load Data for that specific date
+        await LoadData(targetDate);
+    }
     private async Task LoadData()
     {
         isLoading = true;
@@ -358,6 +372,36 @@
             }
         }
         catch (Exception ex) { errorMessage = $"Connection Error: {ex.Message}. Check API Port."; }
+        finally { isLoading = false; }
+    }
+    private async Task LoadData(DateTime startDate)
+    {
+        isLoading = true;
+        try
+        {
+            var dateStr = startDate.ToString("yyyy-MM-dd");
+
+            // Call API with the specific start date
+            var allShifts = await client.GetFromJsonAsync<List<ShiftDto>>($"api/schedule/list?start={dateStr}&days=30");
+
+            if (allShifts != null && allShifts.Any())
+            {
+                shifts = allShifts;
+
+                // Logic to set up the calendar headers
+                // If we requested a specific date, start the calendar on THAT date.
+                // Otherwise, find the earliest shift.
+                var firstDate = !string.IsNullOrEmpty(RequestedDate) ? startDate : shifts.Min(s => s.ShiftDate);
+
+                weekDays.Clear();
+                for (int i = 0; i < 7; i++) weekDays.Add(firstDate.AddDays(i));
+
+                var endDate = firstDate.AddDays(7);
+                shifts = shifts.Where(s => s.ShiftDate < endDate).ToList();
+                uniqueStaff = shifts.Select(s => s.StaffName).Distinct().OrderBy(n => n).ToList();
+            }
+        }
+        catch (Exception ex) { errorMessage = ex.Message; }
         finally { isLoading = false; }
     }
 

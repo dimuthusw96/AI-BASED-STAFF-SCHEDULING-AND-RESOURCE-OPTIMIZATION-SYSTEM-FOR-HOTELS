@@ -81,6 +81,75 @@ namespace HotelManagementSystem.API_.Controllers
             return Ok(new { message = "Shift moved successfully" });
         }
 
-        
+        //// GET: api/schedule/staff/John
+        //[HttpGet("staff/{name}")]
+        //public IActionResult GetMyShifts(string name)
+        //{
+        //    // Fix: Use 'Join' instead of 'Include' because the Model lacks the navigation property
+        //    var myShifts = _context.Shifts
+        //        .Where(s => s.ShiftDate >= DateTime.Today) // Filter Future Shifts
+        //        .Join(_context.Staff,
+        //            shift => shift.StaffID,
+        //            staff => staff.StaffID,
+        //            (shift, staff) => new { Shift = shift, Staff = staff }) // Combine them temporarily
+        //        .Where(combined => combined.Staff.FullName.Contains(name)) // Filter by Name
+        //        .OrderBy(combined => combined.Shift.ShiftDate)
+        //        .Select(combined => new
+        //        {
+        //            ShiftDate = combined.Shift.ShiftDate,
+        //            StartTime = combined.Shift.StartTime,
+        //            EndTime = combined.Shift.EndTime,
+        //            Role = combined.Staff.Role,
+        //            StaffName = combined.Staff.FullName
+        //        })
+        //        .ToList();
+
+        //    return Ok(myShifts);
+        //}
+
+
+
+        // 1. NEW ENDPOINT: Get list of staff names for the dropdown
+        [HttpGet("staff-list")]
+        public IActionResult GetStaffNames()
+        {
+            var names = _context.Staff
+                .Where(s => s.IsActive)
+                .Select(s => s.FullName)
+                .Distinct()
+                .OrderBy(n => n)
+                .ToList();
+            return Ok(names);
+        }
+
+        // 2. UPDATED ENDPOINT: Search with Date Range
+        // URL: api/schedule/staff/John?start=2025-01-01&end=2025-01-31
+        [HttpGet("staff/{name}")]
+        public IActionResult GetMyShifts(string name, [FromQuery] DateTime? start, [FromQuery] DateTime? end)
+        {
+            // Default to "Today" and "30 Days from now" if no dates provided
+            var startDate = start ?? DateTime.Today;
+            var endDate = end ?? DateTime.Today.AddDays(30);
+
+            var myShifts = _context.Shifts
+                .Where(s => s.ShiftDate >= startDate && s.ShiftDate <= endDate) // <--- Date Filter
+                .Join(_context.Staff,
+                    shift => shift.StaffID,
+                    staff => staff.StaffID,
+                    (shift, staff) => new { Shift = shift, Staff = staff })
+                .Where(combined => combined.Staff.FullName == name) // <--- Exact Match for Dropdown
+                .OrderBy(combined => combined.Shift.ShiftDate)
+                .Select(combined => new
+                {
+                    ShiftDate = combined.Shift.ShiftDate,
+                    StartTime = combined.Shift.StartTime,
+                    EndTime = combined.Shift.EndTime,
+                    Role = combined.Staff.Role,
+                    StaffName = combined.Staff.FullName
+                })
+                .ToList();
+
+            return Ok(myShifts);
+        }
     }
 }

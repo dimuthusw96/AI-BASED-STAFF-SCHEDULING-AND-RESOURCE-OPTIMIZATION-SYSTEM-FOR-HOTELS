@@ -1,0 +1,237 @@
+﻿@page "/myschedule"
+@using System.Text.Json.Serialization
+@rendermode InteractiveServer
+
+<style>
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .app-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* FILTERS CARD */
+    .filter-card {
+        background: white;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+    }
+
+    .filter-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #8898aa;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .btn-search {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        background: linear-gradient(87deg, #5e72e4 0%, #825ee4 100%);
+        color: white;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s;
+        height: 40px;
+        margin-top: 24px;
+    }
+
+        .btn-search:active {
+            transform: scale(0.98);
+        }
+
+    /* SHIFT TICKET (Same as before) */
+    .shift-ticket {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 15px;
+        position: relative;
+        overflow: hidden;
+        border-left: 6px solid #e9ecef;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+
+    .next-shift {
+        border-left-color: #2dce89;
+        background: #f6fff9;
+    }
+
+    .next-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #2dce89;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+</style>
+
+<div class="app-container">
+
+    <div class="filter-card">
+        <h3 style="color:#32325d; font-weight:800; margin-bottom:20px; text-align:center;">Staff Schedule Portal</h3>
+
+        <div class="row">
+            <div class="col-md-4">
+                <span class="filter-label">Select Staff</span>
+                <RadzenDropDown Data="@staffNames" @bind-Value="selectedStaff"
+                                Placeholder="Choose name..."
+                                Style="width: 100%;" />
+            </div>
+
+            <div class="col-md-3">
+                <span class="filter-label">From Date</span>
+                <RadzenDatePicker @bind-Value="startDate" DateFormat="MMM dd, yyyy" Style="width: 100%;" />
+            </div>
+
+            <div class="col-md-3">
+                <span class="filter-label">To Date</span>
+                <RadzenDatePicker @bind-Value="endDate" DateFormat="MMM dd, yyyy" Style="width: 100%;" />
+            </div>
+
+            <div class="col-md-2">
+                <button class="btn-search" @onclick="SearchShifts">
+                    <RadzenIcon Icon="search" />
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center p-5"><div class="spinner-border text-primary"></div></div>
+    }
+    else if (myShifts.Any())
+    {
+        <h5 style="color:#8898aa; font-weight:700; margin-bottom:15px; padding-left:10px;">
+            SCHEDULE: @startDate.ToString("MMM dd") - @endDate.ToString("MMM dd")
+        </h5>
+
+        @foreach (var (shift, index) in myShifts.Select((v, i) => (v, i)))
+        {
+            var isNext = (index == 0 && shift.ShiftDate >= DateTime.Today);
+            var ticketClass = isNext ? "shift-ticket next-shift" : "shift-ticket";
+
+            <div class="@ticketClass">
+                @if (isNext)
+                {
+                    <span class="next-badge">Next Up</span>
+                }
+
+                <div class="d-flex align-items-center">
+                    <div style="margin-right: 15px; font-size: 2rem; color: #adb5bd;">
+                        <RadzenIcon Icon="event" />
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; color: #32325d; font-size: 1.1rem;">
+                            @shift.ShiftDate.ToString("dddd, MMMM dd")
+                        </div>
+                        <div style="color: #525f7f; font-size: 0.9rem; margin-top: 4px;">
+                            <RadzenIcon Icon="schedule" Style="font-size:0.8rem; vertical-align:middle;" />
+                            @FormatTime(shift.StartTime) - @FormatTime(shift.EndTime)
+                        </div>
+                        <div style="color: #8898aa; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-top: 8px;">
+                            @shift.Role • @CalculateHours(shift.StartTime, shift.EndTime) HRS
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else if (hasSearched)
+    {
+        <div class="text-center text-muted mt-4">
+            <p>No shifts found for <strong>@selectedStaff</strong> in this date range.</p>
+        </div>
+    }
+</div>
+
+@code {
+    [Inject] public IHttpClientFactory ClientFactory { get; set; }
+
+    // Filter Variables
+    private string selectedStaff;
+    private DateTime startDate = DateTime.Today;
+    private DateTime endDate = DateTime.Today.AddDays(14);
+
+    // Data Variables
+    private List<string> staffNames = new List<string>();
+    private List<MyShiftDto> myShifts = new List<MyShiftDto>();
+
+    private bool isLoading = false;
+    private bool hasSearched = false;
+
+    // 1. Load the Staff List when page opens
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var client = ClientFactory.CreateClient();
+            client.BaseAddress = new Uri("https://localhost:7016/"); // Check your port!
+
+            staffNames = await client.GetFromJsonAsync<List<string>>("api/schedule/staff-list");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error loading staff: " + ex.Message);
+        }
+    }
+
+    // 2. Search Logic
+    private async Task SearchShifts()
+    {
+        if (string.IsNullOrEmpty(selectedStaff)) return;
+
+        isLoading = true;
+        hasSearched = true;
+        myShifts.Clear();
+
+        try
+        {
+            var client = ClientFactory.CreateClient();
+            client.BaseAddress = new Uri("https://localhost:7016/");
+
+            // Format dates for URL (yyyy-MM-dd)
+            string sDate = startDate.ToString("yyyy-MM-dd");
+            string eDate = endDate.ToString("yyyy-MM-dd");
+
+            // Call API with Name + Date Range
+            string url = $"api/schedule/staff/{selectedStaff}?start={sDate}&end={eDate}";
+            myShifts = await client.GetFromJsonAsync<List<MyShiftDto>>(url);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    public class MyShiftDto
+    {
+        [JsonPropertyName("shiftDate")] public DateTime ShiftDate { get; set; }
+        [JsonPropertyName("startTime")] public TimeSpan StartTime { get; set; }
+        [JsonPropertyName("endTime")] public TimeSpan EndTime { get; set; }
+        [JsonPropertyName("role")] public string Role { get; set; }
+    }
+
+    private string FormatTime(TimeSpan t) => DateTime.Today.Add(t).ToString("h:mm tt");
+    private string CalculateHours(TimeSpan start, TimeSpan end) => (end - start).TotalHours.ToString("0.##");
+}

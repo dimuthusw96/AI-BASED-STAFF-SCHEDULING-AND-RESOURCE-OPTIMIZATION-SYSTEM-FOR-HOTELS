@@ -1,4 +1,5 @@
 using HotelManagementSystem_weapp.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
 // 1. Add HTTP Client (To talk to your API)
 builder.Services.AddHttpClient("API", client =>

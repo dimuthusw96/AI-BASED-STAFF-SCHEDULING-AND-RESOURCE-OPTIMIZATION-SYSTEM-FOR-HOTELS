@@ -1,0 +1,148 @@
+﻿@page "/history"
+@using System.Text.Json.Serialization
+@inject IHttpClientFactory ClientFactory
+@inject NavigationManager NavManager
+@rendermode InteractiveServer
+<style>
+    /* Reuse Theme Styles */
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .app-container {
+        padding: 40px;
+    }
+
+    .glass-header {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 20px 30px;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .badge-soft {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+    }
+
+    .badge-high {
+        background-color: #ffd6e0;
+        color: #c01b48;
+    }
+
+    .badge-normal {
+        background-color: #ccf5e7;
+        color: #0c9e76;
+    }
+
+    .badge-low {
+        background-color: #e3e8ee;
+        color: #525f7f;
+    }
+
+    .table-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+</style>
+
+<div class="app-container">
+    <div class="glass-header">
+        <div>
+            <h2 style="margin:0; font-weight:800; color:#32325d;">Prediction History</h2>
+            <p style="margin:0; color:#8898aa;">Select a record to view the schedule.</p>
+        </div>
+    </div>
+
+    <div class="table-card">
+        @if (isLoading)
+        {
+            <p class="text-center p-4">Loading...</p>
+        }
+        else
+        {
+            <RadzenDataGrid Data="@forecasts" TItem="ForecastItem"
+                            AllowPaging="true" PageSize="10"
+                            AllowSorting="true"
+                            AllowFiltering="true" FilterMode="FilterMode.Advanced"
+                            LogicalFilterOperator="LogicalFilterOperator.Or"
+                            ColumnWidth="200px">
+                <Columns>
+
+                    <RadzenDataGridColumn TItem="ForecastItem" Property="ForecastDate" Title="Date" FormatString="{0:MMM dd, yyyy}" />
+
+                    <RadzenDataGridColumn TItem="ForecastItem" Property="OccupancyCount" Title="Guests" Width="100px" />
+
+                    <RadzenDataGridColumn TItem="ForecastItem" Property="Status" Title="Demand">
+                        <Template Context="data">
+                            @if (data.Status.Contains("High"))
+                            {
+                                <span class="badge-soft badge-high">High</span>
+                            }
+                            else if (data.Status.Contains("Normal"))
+                            {
+
+                                <span class="badge-soft badge-normal">Normal</span>
+                            }
+                            else
+                            {
+
+                                <span class="badge-soft badge-low">Low</span>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn TItem="ForecastItem" Title="Action" Sortable="false" Filterable="false" Width="120px">
+                        <Template Context="data">
+                            <button class="btn btn-sm btn-outline-primary"
+                                    @onclick="() => ViewRoster(data.ForecastDate)">
+                                View Roster
+                            </button>
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                </Columns>
+            </RadzenDataGrid>
+        }
+    </div>
+</div>
+
+@code {
+    public class ForecastItem
+    {
+        [JsonPropertyName("forecastDate")] public DateTime ForecastDate { get; set; }
+        [JsonPropertyName("occupancyCount")] public int OccupancyCount { get; set; }
+        [JsonPropertyName("status")] public string Status { get; set; }
+    }
+
+    private List<ForecastItem> forecasts = new List<ForecastItem>();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = ClientFactory.CreateClient("API");
+        try { forecasts = await client.GetFromJsonAsync<List<ForecastItem>>("api/dashboard/history"); }
+        catch { }
+        finally { isLoading = false; }
+    }
+
+    // --- NAVIGATION LOGIC ---
+    private void ViewRoster(DateTime date)
+    {
+        // Navigate to Roster page with the selected date in the URL
+        NavManager.NavigateTo($"/roster?date={date.ToString("yyyy-MM-dd")}");
+    }
+}

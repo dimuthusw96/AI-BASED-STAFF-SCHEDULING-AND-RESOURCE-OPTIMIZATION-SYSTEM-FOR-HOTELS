@@ -25,6 +25,18 @@
         }
       }
     },
+    "/api/Dashboard/history": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Forecast/generate": {
       "post": {
         "tags": [
@@ -151,6 +163,56 @@
           },
           "required": true
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Schedule/staff/{name}": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Schedule/staff-list": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
         "responses": {
           "200": {
             "description": "OK"
