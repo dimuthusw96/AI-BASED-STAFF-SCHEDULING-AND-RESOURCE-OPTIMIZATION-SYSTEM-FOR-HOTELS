@@ -10,6 +10,11 @@ namespace HotelManagementSystem.API_.Models
         public decimal HourlyRate { get; set; }
         public int MaxHoursPerWeek { get; set; }
         public bool IsActive { get; set; }
+
+
+
+        public string Username { get; set; }
+        public string Password { get; set; }
     }
 }
 

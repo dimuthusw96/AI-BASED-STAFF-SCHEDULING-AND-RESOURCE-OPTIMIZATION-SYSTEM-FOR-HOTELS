@@ -1,7 +1,21 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<div class="d-flex" style="min-height: 100vh;">
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+    <div class="flex-grow-1 bg-light">
+   
+    </div>
+</div>
+
+@code {
+    // Helper to get initials like "BS" for Bhanuka Subhash
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "??";
+        var parts = name.Split(' ');
+        return parts.Length > 1 
+            ? $"{parts[0][0]}{parts[1][0]}".ToUpper() 
+            : $"{parts[0][0]}".ToUpper();
+    }
+}

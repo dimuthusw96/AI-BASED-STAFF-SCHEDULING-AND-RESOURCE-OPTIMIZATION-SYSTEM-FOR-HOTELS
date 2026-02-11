@@ -1,0 +1,46 @@
+﻿@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Authorization
+
+<div class="sidebar bg-dark text-white shadow" style="width: 280px; min-height: 100vh;">
+    <div class="p-4">
+        <h4 class="fw-bold text-uppercase tracking-wider">Hotel Pro <span class="text-primary">RMS</span></h4>
+        <hr class="text-secondary" />
+        <nav class="nav flex-column gap-1">
+            <AuthorizeView Context="mainAuth">
+                <Authorized>
+                    <NavLink class="nav-link text-white py-3 px-3" href="dashboard">
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                    </NavLink>
+                    <NavLink class="nav-link text-white py-3 px-3" href="staffmanagement">
+                        <i class="bi bi-building me-2"></i> Resources
+                    </NavLink>
+                    <NavLink class="nav-link text-white py-3 px-3" href="myschedule">
+                        <i class="bi bi-building me-2"></i> Myschedule
+                    </NavLink>
+                    <AuthorizeView Roles="Admin,Manager" Context="managerAuth">
+                        <Authorized>
+                            <NavLink class="nav-link text-white py-3 px-3" href="roster">
+                                <i class="bi bi-calendar-event me-2"></i> Staff Roster
+                            </NavLink>
+                        </Authorized>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="Admin" Context="adminAuth">
+                        <Authorized>
+                            <NavLink class="nav-link text-white py-3 px-3" href="register">
+                                <i class="bi bi-person-plus me-2"></i> Register Staff
+                            </NavLink>
+                            <NavLink class="nav-link text-white py-3 px-3" href="analytics">
+                                <i class="bi bi-graph-up me-2"></i> Analytics
+                            </NavLink>
+                        </Authorized>
+                    </AuthorizeView>
+                </Authorized>
+                <NotAuthorized>
+                    <NavLink class="nav-link text-white py-3 px-3" href="login">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> Login to System
+                    </NavLink>
+                </NotAuthorized>
+            </AuthorizeView>
+        </nav>
+    </div>
+</div>

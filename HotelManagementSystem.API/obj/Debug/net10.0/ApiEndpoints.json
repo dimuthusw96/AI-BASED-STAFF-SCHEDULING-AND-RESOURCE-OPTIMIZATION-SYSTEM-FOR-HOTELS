@@ -104,22 +104,6 @@
         "Name": "name",
         "Type": "System.String",
         "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "HotelManagementSystem.API_.Controllers.ScheduleController",
-    "Method": "GetMyShifts",
-    "RelativePath": "api/Schedule/staff/{name}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "name",
-        "Type": "System.String",
-        "IsRequired": true
       },
       {
         "Name": "start",

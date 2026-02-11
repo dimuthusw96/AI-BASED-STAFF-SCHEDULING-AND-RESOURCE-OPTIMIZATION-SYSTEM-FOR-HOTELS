@@ -1,0 +1,45 @@
+﻿@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider AuthStateProvider
+
+<AuthorizeView Context="authContext">
+    <Authorized>
+        <span class="navbar-brand mb-0 h5 fw-bold text-dark">
+            Welcome back, @authContext.User.Identity?.Name
+        </span>
+        <div class="d-flex align-items-center gap-3">
+            <button @onclick="HandleLogout" class="btn btn-sm btn-outline-danger border-0">
+                <i class="bi bi-power me-1"></i> Logout
+            </button>
+            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-sm"
+                 style="width: 40px; height: 40px; font-weight: 600;">
+                @GetInitials(authContext.User.Identity?.Name)
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <span class="navbar-brand mb-0 h5 fw-bold text-muted">Hotel Management System</span>
+        <a href="login" class="btn btn-primary btn-sm px-4 shadow-sm">Sign In</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "??";
+        var parts = name.Split(' ');
+        return parts.Length > 1 ? $"{parts[0][0]}{parts[1][0]}".ToUpper() : $"{parts[0][0]}".ToUpper();
+    }
+
+    private async Task HandleLogout()
+    {
+        var customAuthProvider = (CustomAuthStateProvider)AuthStateProvider;
+
+        // 1. Clear the session from ProtectedSessionStorage and notify Blazor
+        await customAuthProvider.LogoutAsync();
+
+        // 2. Force a hard reload to "/" or "/login" to completely reset the SignalR circuit
+        Nav.NavigateTo("/login", forceLoad: true);
+    }
+}

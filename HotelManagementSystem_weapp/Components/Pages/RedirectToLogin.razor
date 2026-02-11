@@ -1,0 +1,13 @@
+﻿@* RedirectToLogin.razor *@
+@inject NavigationManager Nav
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Get the current URL so the user can be sent back here after login
+        var returnUrl = Nav.ToBaseRelativePath(Nav.Uri);
+
+        // Redirect to login with the returnUrl parameter
+        Nav.NavigateTo($"~/login?returnUrl={Uri.EscapeDataString(returnUrl)}", forceLoad: false);
+    }
+}

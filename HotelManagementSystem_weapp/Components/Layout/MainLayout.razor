@@ -1,12 +1,48 @@
 ﻿@inherits LayoutComponentBase
-<head>
-    <link rel="stylesheet" href="_content/Radzen.Blazor/css/material-base.css">
-</head>
-@Body
 
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
+<div class="page">
+    <NavMenu />
+
+    <main class="flex-grow-1 d-flex flex-column bg-light">
+        <header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 py-3 border-bottom">
+            <div class="container-fluid p-0">
+                <LoginDisplay />
+            </div>
+        </header>
+
+        <article class="content px-4 py-4 flex-grow-1">
+            @Body
+        </article>
+
+        <footer class="bg-white border-top py-3 px-4 text-center text-muted small">
+            &copy; 2026 Hotel Pro RMS - Dimuthu SW
+        </footer>
+    </main>
 </div>
-<script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+
+<style>
+    .nav-link {
+        transition: all 0.2s ease;
+        border-radius: 8px;
+        margin-bottom: 4px;
+        font-size: 0.95rem;
+    }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #0d6efd !important;
+        }
+
+        .nav-link.active {
+            background-color: #0d6efd !important;
+            color: white !important;
+            box-shadow: 0 4px 6px rgba(13, 110, 253, 0.3);
+        }
+
+    .page {
+        display: flex;
+        flex-direction: row;
+        overflow-x: hidden;
+    }
+</style>
+<head><title>HOTEL|PRO</title></head>

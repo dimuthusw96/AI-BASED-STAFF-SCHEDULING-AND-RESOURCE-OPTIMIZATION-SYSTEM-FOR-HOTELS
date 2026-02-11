@@ -1,0 +1,112 @@
+﻿@page "/register"
+@* @attribute [Authorize(Roles = "Admin")] *@
+@using HotelManagementSystem_weapp.Models
+@using Microsoft.EntityFrameworkCore
+@inject HotelManagementSystem_weapp.Data.ApplicationDbContext _db
+@rendermode InteractiveServer
+
+<div class="register-container d-flex align-items-center justify-content-center">
+    <div class="register-card shadow-lg border-0">
+        <div class="register-header bg-primary text-white p-4 text-center">
+            <i class="bi bi-person-plus-fill mb-2" style="font-size: 2.5rem;"></i>
+            <h3 class="fw-bold mb-0">Staff Registration</h3>
+            <p class="small opacity-75 mb-0">Create internal access for Hotel Pro RMS</p>
+        </div>
+
+        <div class="card-body p-4 p-md-5 bg-white">
+            <div class="form-group mb-3">
+                <label class="form-label small fw-bold text-muted text-uppercase mb-1">Full Name</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0"><i class="bi bi-person text-primary"></i></span>
+                    <input @bind="newUserName" class="form-control bg-light border-0 shadow-none" placeholder="Enter full name" />
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="form-label small fw-bold text-muted text-uppercase mb-1">Username / Email</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0"><i class="bi bi-envelope text-primary"></i></span>
+                    <input @bind="email" class="form-control bg-light border-0 shadow-none" placeholder="staff.name@hotel.com" />
+                </div>
+            </div>
+
+            <div class="form-group mb-4">
+                <label class="form-label small fw-bold text-muted text-uppercase mb-1">System Access Level</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0"><i class="bi bi-shield-lock text-primary"></i></span>
+                    <select @bind="selectedRole" class="form-select bg-light border-0 shadow-none">
+                        <option value="Staff">Staff (General Access)</option>
+                        <option value="Manager">Manager (Roster & Resources)</option>
+                        <option value="Admin">Admin (Full System Access)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn btn-primary w-100 py-3 fw-bold shadow-sm mb-2" @onclick="RegisterUser">
+                Generate Account <i class="bi bi-person-check ms-2"></i>
+            </button>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger border-0 small mt-3 animate__animated animate__shakeX">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i> @errorMessage
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(generatedPassword))
+            {
+                <div class="alert alert-success mt-4 border-0 shadow-sm p-4 animate__animated animate__fadeInUp">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-check-circle-fill fs-4 me-2"></i>
+                        <h6 class="alert-heading fw-bold mb-0">Account Created!</h6>
+                    </div>
+                    <p class="small text-muted mb-3">Share this temporary password with the user. It will expire after first use.</p>
+                    <div class="bg-white rounded p-3 text-center border dashed-border">
+                        <code class="fs-4 fw-bold text-primary">@generatedPassword</code>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string newUserName = "";
+    private string email = "";
+    private string selectedRole = "Staff";
+    private string generatedPassword = "";
+    private string errorMessage = "";
+
+    private async Task RegisterUser()
+    {
+        try
+        {
+            // Basic validation
+            if (string.IsNullOrWhiteSpace(newUserName) || string.IsNullOrWhiteSpace(email))
+            {
+                errorMessage = "Please fill in all fields.";
+                return;
+            }
+
+            generatedPassword = Guid.NewGuid().ToString().Substring(0, 8);
+
+            var user = new ApplicationUser
+            {
+                FullName = newUserName,
+                Username = email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(generatedPassword),
+                IsPasswordResetRequired = true,
+                Role = selectedRole // This maps to the new column in your SQL table
+            };
+
+            _db.ApplicationUsers.Add(user);
+            await _db.SaveChangesAsync();
+
+            errorMessage = ""; // Clear errors on success
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Database error: {ex.Message}";
+        }
+    }
+}

@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HotelManagementSystem.API_.Models
+namespace HotelManagementSystem_weapp.Models
 {
+    [Table("Forecasts")] // This forces EF to use the singular name from your DB
     public class Forecast
     {
         [Key]

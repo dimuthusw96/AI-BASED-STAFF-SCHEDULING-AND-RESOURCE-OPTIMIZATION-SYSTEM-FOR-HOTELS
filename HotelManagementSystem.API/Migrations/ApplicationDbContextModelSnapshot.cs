@@ -67,6 +67,8 @@ namespace HotelManagementSystem.API_.Migrations
 
                     b.HasKey("ShiftID");
 
+                    b.HasIndex("StaffID");
+
                     b.ToTable("Shifts");
                 });
 
@@ -91,13 +93,32 @@ namespace HotelManagementSystem.API_.Migrations
                     b.Property<int>("MaxHoursPerWeek")
                         .HasColumnType("int");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("StaffID");
 
                     b.ToTable("Staff");
+                });
+
+            modelBuilder.Entity("HotelManagementSystem.API_.Models.Shift", b =>
+                {
+                    b.HasOne("HotelManagementSystem.API_.Models.Staff", "Staff")
+                        .WithMany()
+                        .HasForeignKey("StaffID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Staff");
                 });
 #pragma warning restore 612, 618
         }

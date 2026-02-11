@@ -170,6 +170,18 @@
         }
       }
     },
+    "/api/Schedule/staff-list": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Schedule/staff/{name}": {
       "get": {
         "tags": [
@@ -200,18 +212,6 @@
               "format": "date-time"
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Schedule/staff-list": {
-      "get": {
-        "tags": [
-          "Schedule"
         ],
         "responses": {
           "200": {
