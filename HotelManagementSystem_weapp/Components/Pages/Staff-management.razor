@@ -105,6 +105,7 @@
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Role</label>
                                 <InputSelect @bind-Value="editingStaff.Role" class="form-select bg-light border-0">
+                                    <option value="">Select Role</option>
                                     <option value="Housekeeping">Housekeeping</option>
                                     <option value="FrontDesk">Front Desk</option>
                                     <option value="Kitchen">Kitchen</option>
@@ -201,6 +202,8 @@
                 HourlyRate = staff.HourlyRate,
                 MaxHoursPerWeek = staff.MaxHoursPerWeek,
                 IsActive = staff.IsActive
+               
+               
             };
         }
         else
@@ -236,6 +239,7 @@
             await LoadStaff();
 
             CloseModal();
+            await ShowsuccessWithTimeout($"Staff member Updated");
         }
         catch (Exception ex)
         {
@@ -257,7 +261,7 @@
                 await LoadStaff();
             }
             
-            await ShowsuccessWithTimeout($"Database Error");
+            await ShowsuccessWithTimeout($"Staff member Deleted!");
         }
         catch (Exception ex)
         {

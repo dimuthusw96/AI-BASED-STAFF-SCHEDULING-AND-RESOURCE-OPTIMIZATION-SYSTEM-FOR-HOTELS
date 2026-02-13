@@ -184,6 +184,17 @@
         transition: all 0.15s ease;
     }
 
+    .btn-generateforcast {
+        background: #34a8eb;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-weight: 600;
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+        transition: all 0.15s ease;
+    }
+
         .btn-generate:hover {
             transform: translateY(-1px);
             box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
@@ -230,7 +241,9 @@
 
     @if (!string.IsNullOrEmpty(errorMessage))
     {
-        <div class="alert alert-danger" style="border-radius: 12px;">@errorMessage</div>
+        <div class="alert alert-danger" style="border-radius: 12px;">@errorMessage
+            <button type="button" class="btn-generateforcast" @onclick="nextforcat">Gnarate next 7 day prediction</button>
+        </div>
     }
 
     @if (shifts == null || !shifts.Any())
@@ -422,6 +435,25 @@
         catch (Exception ex) { errorMessage = ex.Message; }
         finally { isLoading = false; }
     }
+
+    private async Task nextforcat()
+    {
+        try
+        {
+            isLoading = true;
+            var response = await client.PostAsync("api/forecast/generate?days=7",null);
+            if (!response.IsSuccessStatusCode)
+            {
+
+            }
+            await LoadData();
+        }
+        catch (Exception ex) { errorMessage = ex.Message; }
+        finally { isLoading = false; }
+
+    
+    }
+
 
     private void HandleDragStart(ShiftDto shift)
     {
