@@ -8,7 +8,7 @@
         <nav class="nav flex-column gap-1">
             <AuthorizeView Context="mainAuth">
                 <Authorized>
-                    <NavLink class="nav-link text-white py-3 px-3" href="dashboard">
+                    @* <NavLink class="nav-link text-white py-3 px-3" href="dashboard">
                         <i class="bi bi-speedometer2 me-2"></i> Dashboard
                     </NavLink>
                     <NavLink class="nav-link text-white py-3 px-3" href="staffmanagement">
@@ -16,21 +16,60 @@
                     </NavLink>
                     <NavLink class="nav-link text-white py-3 px-3" href="myschedule">
                         <i class="bi bi-building me-2"></i> Myschedule
-                    </NavLink>
-                    <AuthorizeView Roles="Admin,Manager" Context="managerAuth">
+                    </NavLink> *@
+                    <AuthorizeView Roles="Admin" Context="managerAuth">
                         <Authorized>
+                            <NavLink class="nav-link text-white py-3 px-3" href="dashboard">
+                                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                            </NavLink>
+                            <NavLink class="nav-link text-white py-3 px-3" href="staffmanagement">
+                                <i class="bi bi-building me-2"></i> Resources
+                            </NavLink>
+                            <NavLink class="nav-link text-white py-3 px-3" href="myschedule">
+                                <i class="bi bi-building me-2"></i> Myschedule
+                            </NavLink>
                             <NavLink class="nav-link text-white py-3 px-3" href="roster">
                                 <i class="bi bi-calendar-event me-2"></i> Staff Roster
                             </NavLink>
-                        </Authorized>
-                    </AuthorizeView>
-                    <AuthorizeView Roles="Admin" Context="adminAuth">
-                        <Authorized>
                             <NavLink class="nav-link text-white py-3 px-3" href="register">
                                 <i class="bi bi-person-plus me-2"></i> Register Staff
                             </NavLink>
+                            <NavLink class="nav-link text-white py-3 px-3" href="history">
+                                <i class="bi bi-clock me-2"></i> History
+                            </NavLink>
                             <NavLink class="nav-link text-white py-3 px-3" href="analytics">
                                 <i class="bi bi-graph-up me-2"></i> Analytics
+                            </NavLink>
+                        </Authorized>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="Manager" Context="managerAuth">
+                        <Authorized>
+                            <NavLink class="nav-link text-white py-3 px-3" href="dashboard">
+                                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                            </NavLink>
+                            <NavLink class="nav-link text-white py-3 px-3" href="staffmanagement">
+                                <i class="bi bi-building me-2"></i> Resources
+                            </NavLink>
+                          
+                            <NavLink class="nav-link text-white py-3 px-3" href="roster">
+                                <i class="bi bi-calendar-event me-2"></i> Staff Roster
+                            </NavLink>
+                            <NavLink class="nav-link text-white py-3 px-3" href="register">
+                                <i class="bi bi-person-plus me-2"></i> Register Staff
+                            </NavLink>
+                            <NavLink class="nav-link text-white py-3 px-3" href="history">
+                                <i class="bi bi-clock me-2"></i> History
+                            </NavLink>
+                            <NavLink class="nav-link text-white py-3 px-3" href="analytics">
+                                <i class="bi bi-graph-up me-2"></i> Analytics
+                            </NavLink>
+                        </Authorized>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="Staff" Context="adminAuth">
+                        <Authorized>
+                            
+                            <NavLink class="nav-link text-white py-3 px-3" href="myschedule">
+                                <i class="bi bi-building me-2"></i> Myschedule
                             </NavLink>
                         </Authorized>
                     </AuthorizeView>

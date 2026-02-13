@@ -3,19 +3,86 @@
 @inject IHttpClientFactory ClientFactory
 @inject NavigationManager NavManager
 @rendermode InteractiveServer
+
 <style>
-    /* Reuse Theme Styles */
-    body {
-        background-color: #f0f2f5;
-        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    /* --- FORCE SIDEBAR WIDE --- */
+    ::deep .sidebar {
+        width: 250px !important;
+        display: block !important;
     }
 
-    .app-container {
-        padding: 40px;
+    ::deep .nav-link span {
+        display: inline !important;
+    }
+
+    /* --- TABLE STYLING --- */
+    .table-container {
+        overflow-x: auto;
+        background: white;
+        border-radius: 12px;
+    }
+
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .custom-table th {
+            background: #f8f9fe;
+            color: #8898aa;
+            font-size: 0.8rem;
+            padding: 15px;
+            text-align: left;
+            cursor: pointer;
+            border-bottom: 2px solid #edf2f9;
+        }
+
+        .custom-table td {
+            padding: 15px;
+            border-bottom: 1px solid #edf2f9;
+            color: #525f7f;
+        }
+
+    /* --- PAGINATION CONTROLS --- */
+    .pagination-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .page-btn {
+        border: 1px solid #dee2e6;
+        background: white;
+        padding: 5px 12px;
+        border-radius: 5px;
+        margin: 0 2px;
+        transition: 0.2s;
+    }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-btn.active {
+            background: #5e72e4;
+            color: white;
+            border-color: #5e72e4;
+        }
+
+    /* --- SEARCH BAR --- */
+    .filter-input {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 8px 15px;
+        width: 300px;
+        margin-bottom: 20px;
+        outline: none;
     }
 
     .glass-header {
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(10px);
         border-radius: 16px;
         padding: 20px 30px;
@@ -26,123 +93,106 @@
         align-items: center;
         margin-bottom: 30px;
     }
-
-    .badge-soft {
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-weight: 700;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-    }
-
-    .badge-high {
-        background-color: #ffd6e0;
-        color: #c01b48;
-    }
-
-    .badge-normal {
-        background-color: #ccf5e7;
-        color: #0c9e76;
-    }
-
-    .badge-low {
-        background-color: #e3e8ee;
-        color: #525f7f;
-    }
-
-    .table-card {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        padding: 20px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    }
 </style>
 
 <div class="app-container">
     <div class="glass-header">
-        <div>
-            <h2 style="margin:0; font-weight:800; color:#32325d;">Prediction History</h2>
-            <p style="margin:0; color:#8898aa;">Select a record to view the schedule.</p>
-        </div>
+        <h2 style="font-weight:800; color:#32325d;">Prediction History</h2>
+        <input type="text" class="filter-input" placeholder="Search by status (High, Normal)..."
+               @bind="searchTerm" @bind:event="oninput" />
     </div>
 
     <div class="table-card">
         @if (isLoading)
         {
-            <p class="text-center p-4">Loading...</p>
+            <p>Loading...</p>
         }
         else
         {
-            <RadzenDataGrid Data="@forecasts" TItem="ForecastItem"
-                            AllowPaging="true" PageSize="10"
-                            AllowSorting="true"
-                            AllowFiltering="true" FilterMode="FilterMode.Advanced"
-                            LogicalFilterOperator="LogicalFilterOperator.Or"
-                            ColumnWidth="200px">
-                <Columns>
+            <div class="table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th @onclick='() => Sort("Date")'>Date ↑↓</th>
+                            <th @onclick='() => Sort("Guests")'>Guests ↑↓</th>
+                            <th>Demand</th>
+                            <th style="text-align:right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in PagedForecasts)
+                        {
+                            <tr>
+                                <td>@item.ForecastDate.ToString("MMM dd, yyyy")</td>
+                                <td>@item.OccupancyCount</td>
+                                <td>
+                                    <span class="badge-soft @(GetBadgeClass(item.Status))">@item.Status</span>
+                                </td>
+                                <td style="text-align:right">
+                                    <button class="btn btn-sm btn-outline-primary" @onclick="() => ViewRoster(item.ForecastDate)">View Roster</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
 
-                    <RadzenDataGridColumn TItem="ForecastItem" Property="ForecastDate" Title="Date" FormatString="{0:MMM dd, yyyy}" />
-
-                    <RadzenDataGridColumn TItem="ForecastItem" Property="OccupancyCount" Title="Guests" Width="100px" />
-
-                    <RadzenDataGridColumn TItem="ForecastItem" Property="Status" Title="Demand">
-                        <Template Context="data">
-                            @if (data.Status.Contains("High"))
-                            {
-                                <span class="badge-soft badge-high">High</span>
-                            }
-                            else if (data.Status.Contains("Normal"))
-                            {
-
-                                <span class="badge-soft badge-normal">Normal</span>
-                            }
-                            else
-                            {
-
-                                <span class="badge-soft badge-low">Low</span>
-                            }
-                        </Template>
-                    </RadzenDataGridColumn>
-
-                    <RadzenDataGridColumn TItem="ForecastItem" Title="Action" Sortable="false" Filterable="false" Width="120px">
-                        <Template Context="data">
-                            <button class="btn btn-sm btn-outline-primary"
-                                    @onclick="() => ViewRoster(data.ForecastDate)">
-                                View Roster
-                            </button>
-                        </Template>
-                    </RadzenDataGridColumn>
-
-                </Columns>
-            </RadzenDataGrid>
+            <div class="pagination-wrapper">
+                <span class="text-muted small">Showing @(((currentPage - 1) * pageSize) + 1) to @(Math.Min(currentPage * pageSize, FilteredForecasts.Count())) of @FilteredForecasts.Count() entries</span>
+                <div>
+                    <button class="page-btn" disabled="@(currentPage == 1)" @onclick="(() => currentPage--)">Prev</button>
+                    @for (int i = 1; i <= TotalPages; i++)
+                    {
+                        var pageNum = i;
+                        <button class="page-btn @(currentPage == pageNum ? "active" : "")" @onclick="(() => currentPage = pageNum)">@pageNum</button>
+                    }
+                    <button class="page-btn" disabled="@(currentPage == TotalPages)" @onclick="(() => currentPage++)">Next</button>
+                </div>
+            </div>
         }
     </div>
 </div>
 
 @code {
-    public class ForecastItem
-    {
-        [JsonPropertyName("forecastDate")] public DateTime ForecastDate { get; set; }
-        [JsonPropertyName("occupancyCount")] public int OccupancyCount { get; set; }
-        [JsonPropertyName("status")] public string Status { get; set; }
-    }
-
-    private List<ForecastItem> forecasts = new List<ForecastItem>();
+    private List<ForecastItem> forecasts = new();
     private bool isLoading = true;
+    private string searchTerm = "";
+    private int currentPage = 1;
+    private int pageSize = 30;
+    private bool sortAscending = true;
+
+    // --- LOGIC FOR FILTERING, SORTING, AND PAGING ---
+    private IEnumerable<ForecastItem> FilteredForecasts => forecasts
+        .Where(x => string.IsNullOrWhiteSpace(searchTerm) || x.Status.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+    private IEnumerable<ForecastItem> PagedForecasts => FilteredForecasts
+        .Skip((currentPage - 1) * pageSize)
+        .Take(pageSize);
+
+    private int TotalPages => (int)Math.Ceiling((double)FilteredForecasts.Count() / pageSize);
 
     protected override async Task OnInitializedAsync()
     {
         var client = ClientFactory.CreateClient("API");
-        try { forecasts = await client.GetFromJsonAsync<List<ForecastItem>>("api/dashboard/history"); }
+        try { forecasts = await client.GetFromJsonAsync<List<ForecastItem>>("api/dashboard/history") ?? new(); }
         catch { }
         finally { isLoading = false; }
     }
 
-    // --- NAVIGATION LOGIC ---
-    private void ViewRoster(DateTime date)
+    private void Sort(string column)
     {
-        // Navigate to Roster page with the selected date in the URL
-        NavManager.NavigateTo($"/roster?date={date.ToString("yyyy-MM-dd")}");
+        if (column == "Date") forecasts = sortAscending ? forecasts.OrderBy(x => x.ForecastDate).ToList() : forecasts.OrderByDescending(x => x.ForecastDate).ToList();
+        if (column == "Guests") forecasts = sortAscending ? forecasts.OrderBy(x => x.OccupancyCount).ToList() : forecasts.OrderByDescending(x => x.OccupancyCount).ToList();
+        sortAscending = !sortAscending;
+    }
+
+    private string GetBadgeClass(string status) => status.Contains("High") ? "badge-high" : status.Contains("Normal") ? "badge-normal" : "badge-low";
+    private void ViewRoster(DateTime date) => NavManager.NavigateTo($"/roster?date={date.ToString("yyyy-MM-dd")}");
+
+    public class ForecastItem
+    {
+        public DateTime ForecastDate { get; set; }
+        public int OccupancyCount { get; set; }
+        public string Status { get; set; }
     }
 }

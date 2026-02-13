@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HotelManagementSystem_weapp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5f2c73169129524908b8ed689977eaedc3be8490")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bc0386211f7f59205a853e7ae96c6a156abe6d1d")]
 [assembly: System.Reflection.AssemblyProductAttribute("HotelManagementSystem_weapp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HotelManagementSystem_weapp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
