@@ -1,3 +1,4 @@
+using ApexCharts;
 using HotelManagementSystem_weapp.Components;
 using HotelManagementSystem_weapp.Data;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -38,6 +39,9 @@ builder.Services.AddRadzenComponents();
 
 builder.Services.AddAuthentication("CustomAuth")
     .AddCookie("CustomAuth");
+
+builder.Services.AddApexCharts(); // ? must be present
+builder.Services.AddServerSideBlazor();
 
 var app = builder.Build();
 

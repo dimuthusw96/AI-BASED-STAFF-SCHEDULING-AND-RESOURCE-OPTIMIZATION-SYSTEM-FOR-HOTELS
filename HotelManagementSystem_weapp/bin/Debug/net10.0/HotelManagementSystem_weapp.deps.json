@@ -9,6 +9,8 @@
       "HotelManagementSystem_weapp/1.0.0": {
         "dependencies": {
           "BCrypt.Net-Next": "4.0.3",
+          "Blazor-ApexCharts": "6.1.0",
+          "Fun.Blazor.ApexCharts": "6.0.2",
           "Microsoft.AspNetCore.Authentication.Google": "10.0.2",
           "Microsoft.EntityFrameworkCore": "10.0.2",
           "Microsoft.EntityFrameworkCore.Design": "10.0.0",
@@ -51,6 +53,123 @@
           "lib/net6.0/BCrypt.Net-Next.dll": {
             "assemblyVersion": "4.0.3.0",
             "fileVersion": "4.0.3.0"
+          }
+        }
+      },
+      "Blazor-ApexCharts/6.1.0": {
+        "runtime": {
+          "lib/net10.0/Blazor-ApexCharts.dll": {
+            "assemblyVersion": "6.1.0.0",
+            "fileVersion": "6.1.0.0"
+          }
+        }
+      },
+      "FSharp.Core/6.0.0": {
+        "runtime": {
+          "lib/netstandard2.1/FSharp.Core.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.21.45703"
+          }
+        },
+        "resources": {
+          "lib/netstandard2.1/cs/FSharp.Core.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netstandard2.1/de/FSharp.Core.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netstandard2.1/es/FSharp.Core.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netstandard2.1/fr/FSharp.Core.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netstandard2.1/it/FSharp.Core.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netstandard2.1/ja/FSharp.Core.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netstandard2.1/ko/FSharp.Core.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netstandard2.1/pl/FSharp.Core.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netstandard2.1/pt-BR/FSharp.Core.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netstandard2.1/ru/FSharp.Core.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netstandard2.1/tr/FSharp.Core.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netstandard2.1/zh-Hans/FSharp.Core.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netstandard2.1/zh-Hant/FSharp.Core.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "FSharp.Data.Adaptive/1.2.15": {
+        "dependencies": {
+          "FSharp.Core": "6.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/FSharp.Data.Adaptive.dll": {
+            "assemblyVersion": "1.2.0.0",
+            "fileVersion": "1.2.0.0"
+          }
+        }
+      },
+      "Fun.Blazor/4.1.0": {
+        "dependencies": {
+          "FSharp.Core": "6.0.0",
+          "FSharp.Data.Adaptive": "1.2.15",
+          "Fun.Css": "1.0.1",
+          "Fun.Result": "2.1.0"
+        },
+        "runtime": {
+          "lib/net8.0/Fun.Blazor.dll": {
+            "assemblyVersion": "4.1.0.0",
+            "fileVersion": "4.1.0.0"
+          }
+        }
+      },
+      "Fun.Blazor.ApexCharts/6.0.2": {
+        "dependencies": {
+          "Blazor-ApexCharts": "6.1.0",
+          "FSharp.Core": "6.0.0",
+          "Fun.Blazor": "4.1.0"
+        },
+        "runtime": {
+          "lib/net8.0/Fun.Blazor.ApexCharts.dll": {
+            "assemblyVersion": "6.0.2.0",
+            "fileVersion": "6.0.2.0"
+          }
+        }
+      },
+      "Fun.Css/1.0.1": {
+        "dependencies": {
+          "FSharp.Core": "6.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/Fun.Css.dll": {
+            "assemblyVersion": "1.0.1.0",
+            "fileVersion": "1.0.1.0"
+          }
+        }
+      },
+      "Fun.Result/2.1.0": {
+        "dependencies": {
+          "FSharp.Core": "6.0.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Fun.Result.dll": {
+            "assemblyVersion": "2.1.0.0",
+            "fileVersion": "2.1.0.0"
           }
         }
       },
@@ -914,6 +1033,55 @@
       "sha512": "sha512-W+U9WvmZQgi5cX6FS5GDtDoPzUCV4LkBLkywq/kRZhuDwcbavOzcDAr3LXJFqHUi952Yj3LEYoWW0jbEUQChsA==",
       "path": "bcrypt.net-next/4.0.3",
       "hashPath": "bcrypt.net-next.4.0.3.nupkg.sha512"
+    },
+    "Blazor-ApexCharts/6.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-H2mkr7HEVk+BoQKcyoQtqq3ifoo/VxS7I8B35wO9tpiarGMdnAsL9pwcQBU4E/YnADNF+zOKTIaRxhd93Qr9HA==",
+      "path": "blazor-apexcharts/6.1.0",
+      "hashPath": "blazor-apexcharts.6.1.0.nupkg.sha512"
+    },
+    "FSharp.Core/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-fbv1UwJ2LXVcFCt+GGDPu0sIYA5C6gdDvAupDj3iLQF3clRkua/6J33f+FiGQa8P1tEa+zmz3wrjoTnXZ1UiYg==",
+      "path": "fsharp.core/6.0.0",
+      "hashPath": "fsharp.core.6.0.0.nupkg.sha512"
+    },
+    "FSharp.Data.Adaptive/1.2.15": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-VfH2pi49631jjOlH/lM8vdc95BR159Z8WBLuBOeOsCzCpOVAEigbgfJkZ0I3mq9w1FCraOA/L+DkaQnjhAAgNA==",
+      "path": "fsharp.data.adaptive/1.2.15",
+      "hashPath": "fsharp.data.adaptive.1.2.15.nupkg.sha512"
+    },
+    "Fun.Blazor/4.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ydRLcgY2RFasX1kSZj8EhOSeCUxoMbOu27eJKwIrLUrIhkEXPwNsMtwTEDaQC7cpLHQlYTPVd9fxhffoOGz2+g==",
+      "path": "fun.blazor/4.1.0",
+      "hashPath": "fun.blazor.4.1.0.nupkg.sha512"
+    },
+    "Fun.Blazor.ApexCharts/6.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-bRA+8/RETAwV2PHCzSc1VmhFREAQwRf1YPR/I5Si9N9HGvDOzLlZJdc64uC7KeUGsoLH6yVzqlqrF0D9DH1bMQ==",
+      "path": "fun.blazor.apexcharts/6.0.2",
+      "hashPath": "fun.blazor.apexcharts.6.0.2.nupkg.sha512"
+    },
+    "Fun.Css/1.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-/NuwT5ykkUD+hJbaBRYKlXreLqnvfktq4jZk78EJ8FvePQVWpLanZI+EcAQLhOcJI2AMGATS+mPF4hsdcLzj9g==",
+      "path": "fun.css/1.0.1",
+      "hashPath": "fun.css.1.0.1.nupkg.sha512"
+    },
+    "Fun.Result/2.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-FHa3lCREXPrsYafuwVVjI4WbVjovguqwhMjfQlnKAUQEKkSi5ebyJC9VGKcvphGqD4Pjw0WWgxVK+IWtfdYNcw==",
+      "path": "fun.result/2.1.0",
+      "hashPath": "fun.result.2.1.0.nupkg.sha512"
     },
     "Humanizer.Core/2.14.1": {
       "type": "package",

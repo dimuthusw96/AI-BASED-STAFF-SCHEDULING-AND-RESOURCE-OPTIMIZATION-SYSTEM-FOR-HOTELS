@@ -38,7 +38,7 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
         }
     }
 
-    public async Task UpdateAuthenticationState(UserSession? userSession)
+    public virtual async Task UpdateAuthenticationState(UserSession? userSession)
     {
         ClaimsPrincipal claimsPrincipal;
 

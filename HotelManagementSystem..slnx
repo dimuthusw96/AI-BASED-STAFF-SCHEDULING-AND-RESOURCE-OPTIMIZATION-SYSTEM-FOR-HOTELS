@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="HMRMSTest/HMRMSTest.csproj" Id="8f405b6c-e195-474b-9764-70b45e970dc4" />
   <Project Path="HotelManagementSystem.API/HotelManagementSystem.API.csproj" />
   <Project Path="HotelManagementSystem_weapp/HotelManagementSystem_weapp.csproj" Id="3d5d2d4d-501d-4f4c-b5b4-66fd92b512a7" />
 </Solution>
