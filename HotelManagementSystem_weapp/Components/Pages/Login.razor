@@ -5,6 +5,7 @@
 @inject ApplicationDbContext _db
 @inject NavigationManager Nav
 @inject AuthenticationStateProvider AuthStateProvider
+@inject AuthService AuthService
 @rendermode InteractiveServer
 
 <div class="login-container d-flex align-items-center justify-content-center">
@@ -63,53 +64,32 @@
 
     private async Task HandleLogin()
     {
-        try
+        var result = await AuthService.LoginAsync(username, password);
+
+        if (result.Success && result.User != null)
         {
-            // 1. Fetch user from SQL DB
-            var user = await _db.ApplicationUsers.FirstOrDefaultAsync(u => u.Username == username);
+            var user = result.User;
 
-            // 2. Verify Password using BCrypt
-            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            var customAuthProvider = (CustomAuthStateProvider)AuthStateProvider;
+
+            var session = new UserSession
             {
-                // 3. Get the Custom State Provider
-                var customAuthProvider = (CustomAuthStateProvider)AuthStateProvider;
+                UserName = user.FullName,
+                Role = user.Role
+            };
 
-                // 4. Create the session object
-                var session = new UserSession
-                {
-                    UserName = user.FullName,
-                    Role = user.Role
-                };
+            await customAuthProvider.UpdateAuthenticationState(session);
 
-                // 5. Update state (Saves to ProtectedSessionStorage)
-                await customAuthProvider.UpdateAuthenticationState(session);
-
-                // 6. Navigation Logic
-                if (user.IsPasswordResetRequired)
-                {
-                    // Always force password change if required
-                    Nav.NavigateTo($"/change-password/{Uri.EscapeDataString(user.Username)}");
-                }
-                else if (!string.IsNullOrEmpty(ReturnUrl))
-                {
-                    // Send them back to the specific page they were trying to access
-                    Nav.NavigateTo(ReturnUrl);
-                }
-                else
-                {
-                    // Default to Dashboard
-                    Nav.NavigateTo("/");
-                }
-            }
+            if (user.IsPasswordResetRequired)
+                Nav.NavigateTo($"/change-password/{Uri.EscapeDataString(user.Username)}");
+            else if (!string.IsNullOrEmpty(ReturnUrl))
+                Nav.NavigateTo(ReturnUrl);
             else
-            {
-                errorMessage = "Invalid username or password.";
-            }
+                Nav.NavigateTo("/");
         }
-        catch (Exception ex)
+        else
         {
-            errorMessage = "A database error occurred. Please try again later.";
-            // For debugging: Console.WriteLine(ex.Message);
+            errorMessage = "Invalid username or password.";
         }
     }
 }

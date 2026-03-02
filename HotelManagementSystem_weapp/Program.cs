@@ -42,7 +42,7 @@ builder.Services.AddAuthentication("CustomAuth")
 
 builder.Services.AddApexCharts(); // ? must be present
 builder.Services.AddServerSideBlazor();
-
+builder.Services.AddScoped<AuthService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
