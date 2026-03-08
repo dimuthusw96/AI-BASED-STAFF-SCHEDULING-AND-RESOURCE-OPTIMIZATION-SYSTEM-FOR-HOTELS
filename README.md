@@ -74,4 +74,4 @@ To get a local copy up and running, follow these simple steps.
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/your-username/hotel-staff-scheduling-ai.git](https://github.com/your-username/hotel-staff-scheduling-ai.git)
+   git clone gh repo clone dimuthusw96/AI-BASED-STAFF-SCHEDULING-AND-RESOURCE-OPTIMIZATION-SYSTEM-FOR-HOTELS
