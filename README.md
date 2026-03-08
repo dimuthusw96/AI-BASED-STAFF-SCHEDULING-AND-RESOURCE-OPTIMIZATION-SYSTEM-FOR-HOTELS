@@ -8,7 +8,7 @@
 
 An intelligent, automated workforce management solution designed specifically for the hospitality industry. This system leverages Artificial Intelligence and Machine Learning to forecast hotel demand and automatically generate optimized staff schedules, reducing administrative overhead and operational costs.
 
-**Developed as a BSc (Hons) Software Engineering Dissertation** *Cardiff Metropolitan University / Cardiff School of Technology*
+
 
 ---
 
